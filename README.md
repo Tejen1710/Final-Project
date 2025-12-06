@@ -1,18 +1,28 @@
-# FastAPI Secure User Management & Calculation Service
+# FastAPI JWT Authentication with E2E Testing - Module 13
 
 ## Overview
-This is a **Module 12** FastAPI project that extends Module 11 with comprehensive user authentication, authorization, and a complete BREAD (Browse, Read, Edit, Add, Delete) API for managing calculations. The application features secure user registration and login, full calculation CRUD operations, and extensive test coverage.
+This is a **Module 13** FastAPI project that implements JWT-based authentication with front-end registration and login pages, Playwright E2E tests, and automated CI/CD deployment to Docker Hub.
 
 ## Key Features
-- **User Management**: Registration, login, and user retrieval with secure password hashing
-- **Authentication**: Password verification using PBKDF2-SHA256
+- **JWT Authentication**: Secure token-based authentication with /register and /login endpoints
+- **Front-End Pages**: Interactive HTML pages for user registration and login with client-side validation
+- **User Management**: Registration, login, and user retrieval with secure password hashing (PBKDF2-SHA256)
 - **Calculation Service**: Full BREAD operations (Create, Read, Update, Delete)
 - **Calculation Types**: Add, Subtract, Multiply, Divide with automatic result computation
-- **Data Validation**: Pydantic schemas with comprehensive validation (divide-by-zero checks, email validation, etc.)
+- **Data Validation**: Pydantic schemas with comprehensive validation (email format, password length, divide-by-zero)
 - **Database Integration**: SQLAlchemy ORM with SQLite/PostgreSQL support
+- **E2E Testing**: Playwright automated tests for registration and login flows
 - **RESTful API**: FastAPI with automatic OpenAPI documentation
-- **Comprehensive Testing**: 57 unit and integration tests (all passing ✅)
+- **Comprehensive Testing**: 61 unit tests + Playwright E2E tests (all passing ✅)
+- **CI/CD Pipeline**: GitHub Actions with automated testing and Docker Hub deployment
 - **Docker Support**: Containerized deployment ready
+
+## 🆕 Module 13 Additions
+- JWT token generation and validation
+- Client-side form validation for email format and password strength
+- Playwright E2E tests covering positive and negative scenarios
+- Front-end static pages for authentication
+- Automated CI/CD pipeline with E2E testing
 
 ## Project Structure
 
@@ -390,6 +400,126 @@ docker stop calculator-app
 - `PORT`: Server port (default: `8000`)
 - `HOST`: Server host (default: `0.0.0.0`)
 
+## Module 13: JWT Authentication & E2E Testing
+
+### JWT Authentication Endpoints
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| POST | `/register` | Register user (JWT) | `{email, password}` | `{access_token, token_type}` (200) |
+| POST | `/login` | Login user (JWT) | `{email, password}` | `{access_token, token_type}` (200) |
+
+**Features:**
+- Auto-generates username from email (e.g., `john@example.com` → `john`)
+- Returns JWT token upon successful registration/login
+- Token expires in 60 minutes (configurable)
+- Uses HS256 algorithm for JWT signing
+
+### Front-End Pages
+
+**Access the front-end:**
+- Registration: http://127.0.0.1:8000/static/register.html
+- Login: http://127.0.0.1:8000/static/login.html
+
+**Client-Side Validation:**
+- Email format validation (must contain @)
+- Password length validation (min 8 characters)
+- Password confirmation matching
+- Real-time error messages
+- JWT token stored in localStorage
+
+### Running the Front-End
+
+1. **Start the server:**
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+2. **Open in browser:**
+   - Register: http://localhost:8000/static/register.html
+   - Login: http://localhost:8000/static/login.html
+
+3. **Test the workflow:**
+   - Register a new user with email and password
+   - Check browser console or localStorage for JWT token
+   - Login with the same credentials
+   - Verify token is stored
+
+### Playwright E2E Tests
+
+**Install Playwright browsers:**
+```bash
+python -m playwright install chromium
+```
+
+**Run E2E tests:**
+```bash
+# Run all E2E tests
+pytest tests/e2e/ -v
+
+# Run specific E2E test file
+pytest tests/e2e/test_register_e2e.py -v
+pytest tests/e2e/test_login_e2e.py -v
+
+# Run with headed browser (see the tests run)
+pytest tests/e2e/ -v --headed
+
+# Run E2E tests with server already running
+# (Start server in one terminal, run tests in another)
+uvicorn app.main:app --reload
+pytest tests/e2e/ -v
+```
+
+**E2E Test Coverage:**
+
+**Positive Tests:**
+- ✅ Register with valid data (email format, password length ≥8)
+- ✅ Login with correct credentials
+- ✅ JWT token stored in localStorage
+- ✅ Success messages displayed
+- ✅ Complete workflow: register → login
+
+**Negative Tests:**
+- ✅ Register with short password → front-end error
+- ✅ Register with mismatched passwords → front-end error
+- ✅ Register with invalid email → front-end error
+- ✅ Register with duplicate email → server 400 error
+- ✅ Login with wrong password → server 401 error
+- ✅ Login with non-existent user → server 401 error
+- ✅ Login with invalid email format → front-end error
+
+### CI/CD Pipeline
+
+**GitHub Actions Workflow:**
+1. Run unit tests (pytest)
+2. Run integration tests
+3. Install Playwright browsers
+4. Start FastAPI server in background
+5. Run Playwright E2E tests
+6. Build Docker image (if all tests pass)
+7. Push to Docker Hub (if all tests pass)
+
+**View workflow:** `.github/workflows/ci.yml`
+
+**Docker Hub Repository:** https://hub.docker.com/r/[your-username]/module13-calculator
+
+### Testing Workflow
+
+**Complete test suite:**
+```bash
+# 1. Run unit and integration tests
+pytest tests/unit tests/integration tests/test_*.py -v
+
+# 2. Start server for E2E tests
+uvicorn app.main:app --reload &
+
+# 3. Run E2E tests
+pytest tests/e2e/ -v
+
+# 4. Run all tests (E2E will auto-start server)
+pytest -v
+```
+
 ## Dependencies
 
 Key packages:
@@ -397,9 +527,11 @@ Key packages:
 - **uvicorn**: ASGI server
 - **sqlalchemy**: ORM
 - **pydantic**: Data validation
-- **passlib**: Password hashing
+- **passlib**: Password hashing with PBKDF2-SHA256
+- **python-jose**: JWT token generation and validation
 - **pytest**: Testing framework
 - **httpx**: HTTP client for testing
+- **playwright**: Browser automation for E2E tests
 
 See `requirements.txt` for complete list.
 

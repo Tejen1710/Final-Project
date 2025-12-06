@@ -6,6 +6,13 @@ from sqlalchemy.orm import sessionmaker
 from app.database import Base, get_db
 from app.main import app
 
+@pytest.fixture
+def test_db(db_session):
+    """
+    Alias fixture so tests that expect `test_db` can reuse the existing `db_session` fixture.
+    """
+    return db_session
+
 # Get DATABASE_URL from environment or use default
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test_db.db")
 

@@ -1,4 +1,4 @@
-name: CI - Module 12
+name: CI - Module 13
 
 on:
   push:
@@ -28,6 +28,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/calculator_db
       PYTHONUNBUFFERED: "1"
+      BASE_URL: "http://localhost:8000"
 
     steps:
       - name: Checkout code
@@ -43,18 +44,35 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run tests
+      - name: Install Playwright browsers
         run: |
-          pytest -v
+          python -m playwright install chromium
+          python -m playwright install-deps
+
+      - name: Run unit and integration tests
+        run: |
+          pytest -v tests/unit tests/integration tests/test_*.py
+
+      - name: Start FastAPI server in background
+        run: |
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          sleep 5
+          curl -f http://localhost:8000/static/login.html || exit 1
+
+      - name: Run Playwright E2E tests
+        run: |
+          pytest -v tests/e2e --maxfail=1
 
       - name: Login to Docker Hub
+        if: success()
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
+        if: success()
         run: |
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/module12-calculator
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/module13-calculator
           docker build -t $IMAGE_NAME:latest .
           docker push $IMAGE_NAME:latest

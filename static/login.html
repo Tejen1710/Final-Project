@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+</head>
+<body>
+  <h1>Login</h1>
+
+  <form id="login-form" novalidate>
+    <label>Email:
+      <input type="email" id="email" />
+    </label>
+    <br />
+    <label>Password:
+      <input type="password" id="password" />
+    </label>
+    <br />
+    <button type="submit">Login</button>
+  </form>
+
+  <p id="error" style="color:red;"></p>
+  <p id="success" style="color:green;"></p>
+
+  <script>
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('error');
+    const successEl = document.getElementById('success');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.textContent = '';
+      successEl.textContent = '';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email.includes('@')) {
+        errorEl.textContent = 'Please enter a valid email.';
+        return;
+      }
+      if (!password) {
+        errorEl.textContent = 'Password is required.';
+        return;
+      }
+
+      try {
+        const resp = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (resp.ok) {
+          const data = await resp.json();
+          localStorage.setItem('token', data.access_token);
+          successEl.textContent = 'Login successful!';
+        } else if (resp.status === 401) {
+          errorEl.textContent = 'Invalid credentials.';
+        } else {
+          const errData = await resp.json().catch(() => ({}));
+          errorEl.textContent = errData.detail || 'Login failed.';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Network error. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -44,6 +44,24 @@ def get_user_by_username(db: Session, username: str) -> models.User | None:
     return db.query(models.User).filter(models.User.username == username).first()
 
 
+def get_user_by_email(db: Session, email: str) -> models.User | None:
+    """Get user by email address"""
+    return db.query(models.User).filter(models.User.email == email).first()
+
+
+def authenticate_user(db: Session, email: str | None = None, username: str | None = None, password: str = None) -> models.User | None:
+    """Authenticate user by email or username. Returns user if valid, None otherwise."""
+    user = None
+    if email:
+        user = get_user_by_email(db, email)
+    elif username:
+        user = get_user_by_username(db, username)
+    
+    if not user or not security.verify_password(password, user.password_hash):
+        return None
+    return user
+
+
 # ---------- CALCULATION CRUD ----------
 
 def create_calculation(db: Session, calc_in: schemas.CalculationCreate) -> models.Calculation:
