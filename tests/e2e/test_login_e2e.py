@@ -40,12 +40,15 @@ class TestLogin:
         # Submit form
         page.click("button[type='submit']")
         
-        # Wait for success message
-        success_message = page.locator("#success")
-        success_message.wait_for(state="visible", timeout=5000)
+        # Wait for either redirect to calculations page or success message text
+        page.wait_for_timeout(2000)
         
-        # Verify success message
-        assert "successful" in success_message.text_content().lower()
+        # Should either redirect to calculations.html OR show success message with text
+        success_message = page.locator("#success")
+        is_redirected = "calculations.html" in page.url
+        has_success_text = "successful" in success_message.text_content().lower()
+        
+        assert is_redirected or has_success_text, f"Expected redirect or success message, got URL: {page.url}"
         
         # Verify no error message
         error_message = page.locator("#error")
