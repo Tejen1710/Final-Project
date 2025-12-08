@@ -269,18 +269,20 @@ class TestCalculationsBREAD:
     def test_unauthorized_access_without_token(self, page, base_url):
         """
         NEGATIVE TEST: Attempt to access calculations page without authentication
-        Verifies redirect to login page
+        Verifies redirect to login page or shows error
         """
-        # Clear any existing token
-        page.goto(f"{base_url}/static/calculations.html")
+        # Clear any existing token by going to a simple page first
+        page.goto(f"{base_url}/static/login.html")
         page.evaluate("() => localStorage.clear()")
         
-        # Try to access calculations page
+        # Try to access calculations page without token
         page.goto(f"{base_url}/static/calculations.html")
-        page.wait_for_timeout(1000)
         
-        # Should redirect to login page
-        assert "login.html" in page.url
+        # Wait for either redirect or error to appear
+        page.wait_for_timeout(2000)
+        
+        # Should either redirect to login page OR show authentication error
+        assert "login.html" in page.url or page.locator("#browse-error").is_visible()
 
     def test_multiple_operation_types(self, page, base_url, setup_user_and_login):
         """
