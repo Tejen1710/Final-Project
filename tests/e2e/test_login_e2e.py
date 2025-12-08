@@ -40,24 +40,16 @@ class TestLogin:
         # Submit form
         page.click("button[type='submit']")
         
-        # Wait for either redirect to calculations page or success message text
+        # Wait for redirect to calculations page
         page.wait_for_timeout(2000)
         
-        # Should either redirect to calculations.html OR show success message with text
-        success_message = page.locator("#success")
-        is_redirected = "calculations.html" in page.url
-        has_success_text = "successful" in success_message.text_content().lower()
-        
-        assert is_redirected or has_success_text, f"Expected redirect or success message, got URL: {page.url}"
-        
-        # Verify no error message
-        error_message = page.locator("#error")
-        assert error_message.text_content() == ""
+        # Should redirect to calculations.html after successful login
+        assert "calculations.html" in page.url, f"Expected redirect to calculations.html, got URL: {page.url}"
         
         # Verify JWT token is stored in localStorage
         token = page.evaluate("() => localStorage.getItem('token')")
-        assert token is not None
-        assert len(token) > 0
+        assert token is not None, "JWT token should be stored in localStorage"
+        assert len(token) > 0, "JWT token should not be empty"
     
     def test_login_with_invalid_credentials_shows_error(self, page, base_url):
         """
