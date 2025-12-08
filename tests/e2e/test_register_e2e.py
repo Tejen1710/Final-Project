@@ -31,21 +31,16 @@ class TestRegistration:
         # Submit the form
         page.click("button[type='submit']")
         
-        # Wait for success message
-        success_message = page.locator("#success")
-        success_message.wait_for(state="visible", timeout=5000)
+        # Wait for redirect to calculations page
+        page.wait_for_timeout(2000)
         
-        # Verify success message
-        assert "successful" in success_message.text_content().lower()
-        
-        # Verify no error message
-        error_message = page.locator("#error")
-        assert error_message.text_content() == ""
+        # Should redirect to calculations.html after successful registration
+        assert "calculations.html" in page.url, f"Expected redirect to calculations.html, got URL: {page.url}"
         
         # Verify JWT token is stored in localStorage
         token = page.evaluate("() => localStorage.getItem('token')")
-        assert token is not None
-        assert len(token) > 0
+        assert token is not None, "JWT token should be stored"
+        assert len(token) > 0, "JWT token should not be empty"
     
     def test_register_with_short_password_shows_error(self, page, base_url):
         """
@@ -62,16 +57,15 @@ class TestRegistration:
         # Submit form
         page.click("button[type='submit']")
         
-        # Wait for error message
-        error_message = page.locator("#error")
-        error_message.wait_for(state="visible", timeout=2000)
+        # Wait for error response
+        page.wait_for_timeout(2000)
         
         # Verify error message about password length
+        error_message = page.locator("#error")
         assert "8 characters" in error_message.text_content().lower()
         
-        # Verify no success message
-        success_message = page.locator("#success")
-        assert success_message.text_content() == ""
+        # Should NOT redirect
+        assert "register.html" in page.url
     
     def test_register_with_mismatched_passwords_shows_error(self, page, base_url):
         """
@@ -88,16 +82,15 @@ class TestRegistration:
         # Submit form
         page.click("button[type='submit']")
         
-        # Wait for error message
-        error_message = page.locator("#error")
-        error_message.wait_for(state="visible", timeout=2000)
+        # Wait for error response
+        page.wait_for_timeout(2000)
         
         # Verify error message about password mismatch
+        error_message = page.locator("#error")
         assert "do not match" in error_message.text_content().lower()
         
-        # Verify no success message
-        success_message = page.locator("#success")
-        assert success_message.text_content() == ""
+        # Should NOT redirect
+        assert "register.html" in page.url
     
     def test_register_with_invalid_email_shows_error(self, page, base_url):
         """
@@ -114,16 +107,15 @@ class TestRegistration:
         # Submit form
         page.click("button[type='submit']")
         
-        # Wait for error message
-        error_message = page.locator("#error")
-        error_message.wait_for(state="visible", timeout=2000)
+        # Wait for error response
+        page.wait_for_timeout(2000)
         
         # Verify error message about email format
+        error_message = page.locator("#error")
         assert "email" in error_message.text_content().lower()
         
-        # Verify no success message
-        success_message = page.locator("#success")
-        assert success_message.text_content() == ""
+        # Should NOT redirect
+        assert "register.html" in page.url
     
     def test_register_with_duplicate_email_shows_server_error(self, page, base_url):
         """
@@ -153,17 +145,16 @@ class TestRegistration:
         page.fill("#confirm-password", test_password)
         page.click("button[type='submit']")
         
-        # Wait for error message
-        error_message = page.locator("#error")
-        error_message.wait_for(state="visible", timeout=3000)
+        # Wait for error response
+        page.wait_for_timeout(2000)
         
         # Verify error message about duplicate email
+        error_message = page.locator("#error")
         error_text = error_message.text_content().lower()
-        assert "already" in error_text or "exists" in error_text or "registered" in error_text
+        assert "already" in error_text or "exists" in error_text or "registered" in error_text, f"Expected duplicate error, got: {error_text}"
         
-        # Verify no success message
-        success_message = page.locator("#success")
-        assert success_message.text_content() == ""
+        # Should NOT redirect
+        assert "register.html" in page.url
     
     def test_registration_page_elements_present(self, page, base_url):
         """
