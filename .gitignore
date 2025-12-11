@@ -57,3 +57,8 @@ test-results/
 
 # Node modules (if any)
 node_modules/
+
+# Temporary documentation files
+FEATURES.md
+GITHUB_SETUP.md
+PROJECT_READY.md
