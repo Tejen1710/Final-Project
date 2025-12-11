@@ -131,3 +131,48 @@ def delete_calculation(db: Session, calc_id: int, user_id: int | None = None) ->
     db.commit()
     return True
 
+
+# ---------- USER PROFILE CRUD ----------
+
+def update_user_profile(db: Session, user_id: int, profile_update: schemas.UserProfileUpdate) -> models.User | None:
+    """Update user profile information (bio, email)"""
+    from datetime import datetime, timezone
+    
+    user = get_user_by_id(db, user_id)
+    if not user:
+        return None
+    
+    update_data = _to_dict(profile_update, exclude_unset=True)
+    
+    # Check if email is being changed and if it's already taken
+    if 'email' in update_data and update_data['email'] != user.email:
+        existing_user = get_user_by_email(db, update_data['email'])
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already in use by another user",
+            )
+    
+    # Update fields
+    for field, value in update_data.items():
+        setattr(user, field, value)
+    
+    # Update timestamp
+    user.profile_updated_at = datetime.now(timezone.utc)
+    
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def change_user_password(db: Session, user_id: int, new_password_hash: str) -> models.User | None:
+    """Update user password hash"""
+    user = get_user_by_id(db, user_id)
+    if not user:
+        return None
+    
+    user.password_hash = new_password_hash
+    db.commit()
+    db.refresh(user)
+    return user
+

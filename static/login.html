@@ -10,7 +10,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
       font-family: 'Inter', sans-serif; 
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -18,20 +18,22 @@
       padding: 20px;
     }
     .container {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.98);
       padding: 50px 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border-radius: 25px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
       max-width: 450px;
       width: 100%;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     h1 {
-      color: #667eea;
+      color: #00b4d8;
       text-align: center;
       margin-bottom: 10px;
       font-size: 2.5rem;
       font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 180, 216, 0.2);
     }
     .subtitle {
       text-align: center;
@@ -60,25 +62,27 @@
     }
     input:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-color: #00b4d8;
+      box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+      background: #f8fcff;
     }
     button {
       cursor: pointer;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
       color: white;
       border: none;
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 15px;
       font-size: 16px;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 5px 20px rgba(0, 180, 216, 0.4);
       margin-top: 10px;
     }
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 180, 216, 0.6);
+      background: linear-gradient(135deg, #0096c7 0%, #023e8a 100%);
     }
     button:active {
       transform: translateY(0);
@@ -108,7 +112,7 @@
       font-size: 0.95rem;
     }
     .register-link a {
-      color: #667eea;
+      color: #00b4d8;
       text-decoration: none;
       font-weight: 600;
     }

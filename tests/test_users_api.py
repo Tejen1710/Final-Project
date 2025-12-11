@@ -1,5 +1,5 @@
 """
-Basic user API tests for backward compatibility with Module 11.
+Basic user API tests for user registration and authentication.
 For comprehensive endpoint tests, see tests/integration/test_users_calculations_api.py
 """
 import pytest

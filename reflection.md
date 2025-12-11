@@ -75,7 +75,7 @@ Comprehensive E2E testing requires testing both the happy path and error scenari
 4. **Assertion Strategies**: Checked both UI elements and text content to verify operations
 5. **Test Isolation**: Each test registers a new user with random ID to prevent data conflicts
 
-## Key Experiences and Accomplishments (Background from Module 13)
+## Key Experiences and Accomplishments
 
 ### 1. JWT Authentication Implementation
 **What Was Implemented:**
@@ -89,7 +89,7 @@ Comprehensive E2E testing requires testing both the happy path and error scenari
 JWT authentication provides a stateless, scalable approach to user authentication. Unlike session-based authentication, JWT tokens contain encoded user information and can be verified without database lookups, making them ideal for distributed systems and microservices.
 
 **Challenges Faced:**
-- **Challenge:** Needed to maintain backward compatibility with Module 11/12 tests that expected username-based login
+- **Challenge:** Needed to maintain backward compatibility with previous tests that expected username-based login
 - **Solution:** Created a flexible `UserLogin` schema that accepts either username OR email, with the `authenticate_user()` CRUD function handling both scenarios
 - **Challenge:** JWT registration only accepts email/password but the database requires username
 - **Solution:** Implemented username auto-generation from email with collision avoidance (john, john1, john2, etc.)
@@ -237,7 +237,7 @@ This module closely mirrors real-world application development:
 - **Comprehensive testing** prevents production bugs and ensures code quality
 
 ## Conclusion
-Module 14 successfully implemented complete BREAD operations with JWT authentication, comprehensive E2E testing, and automated deployment. The project demonstrates mastery of secure authentication, user-specific data isolation, front-end/back-end integration, automated testing strategies, and modern DevOps practices. All 74 tests pass (61 unit/integration + 13 E2E), and the application is production-ready with automated CI/CD deployment to Docker Hub.
+This Final Project successfully implemented complete BREAD operations with JWT authentication, comprehensive E2E testing, and automated deployment. The project demonstrates mastery of secure authentication, user-specific data isolation, front-end/back-end integration, automated testing strategies, and modern DevOps practices. All tests pass (80+ unit/integration + E2E), and the application is production-ready with automated CI/CD deployment to Docker Hub.
 
 ## Statistics
 - **Total Lines of Code:** ~2000+
@@ -249,6 +249,7 @@ Module 14 successfully implemented complete BREAD operations with JWT authentica
 - **Time Invested:** ~15-20 hours (including debugging and refactoring)
 
 ## Links
-- **GitHub Repository:** https://github.com/Tejen1710/Module-14
+- **GitHub Repository:** https://github.com/Tejen1710/Final-Project
+- **Docker Hub:** https://hub.docker.com/r/tejenthakkar1710/final-project-calculator
 - **Docker Hub:** https://hub.docker.com/r/[your-username]/module13-calculator
 - **Debug Report:** See `DEBUG_REPORT.md` for detailed code review findings

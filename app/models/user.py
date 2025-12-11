@@ -11,6 +11,10 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Profile fields
+    bio = Column(String(500), nullable=True)
+    profile_updated_at = Column(DateTime(timezone=True), nullable=True)
 
     # Relationship to Calculation
     calculations = relationship("Calculation", back_populates="user", cascade="all, delete-orphan")

@@ -20,6 +20,7 @@ env/
 *.sqlite3
 test.db
 test_db.db
+*.db-journal
 
 # IDE
 .vscode/
@@ -48,3 +49,11 @@ test-results/
 # Environment variables
 .env
 .env.local
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Node modules (if any)
+node_modules/

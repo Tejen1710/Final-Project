@@ -53,3 +53,76 @@ def login(user_in: schemas.UserLogin, db: Session = Depends(get_db)):
 
     access_token = security.create_access_token({"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/profile", response_model=schemas.UserProfile)
+def get_profile(
+    current_user_email: str = Depends(security.get_current_user_email),
+    db: Session = Depends(get_db)
+):
+    """Get current user profile"""
+    user = crud.get_user_by_email(db, current_user_email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+    return user
+
+
+@router.put("/profile", response_model=schemas.UserProfile)
+def update_profile(
+    profile_update: schemas.UserProfileUpdate,
+    current_user_email: str = Depends(security.get_current_user_email),
+    db: Session = Depends(get_db)
+):
+    """Update user profile (bio, email)"""
+    user = crud.get_user_by_email(db, current_user_email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+    
+    updated_user = crud.update_user_profile(db, user.id, profile_update)
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update profile",
+        )
+    return updated_user
+
+
+@router.post("/change-password", status_code=200)
+def change_password(
+    pwd_change: schemas.PasswordChange,
+    current_user_email: str = Depends(security.get_current_user_email),
+    db: Session = Depends(get_db)
+):
+    """Change user password"""
+    user = crud.get_user_by_email(db, current_user_email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+    
+    # Verify current password
+    if not security.verify_password(pwd_change.current_password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect",
+        )
+    
+    # Hash new password
+    new_password_hash = security.hash_password(pwd_change.new_password)
+    
+    # Update password
+    updated_user = crud.change_user_password(db, user.id, new_password_hash)
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to change password",
+        )
+    
+    return {"message": "Password changed successfully"}

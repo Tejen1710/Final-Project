@@ -1,7 +1,7 @@
-# FastAPI Calculator with BREAD Operations - Module 14
+# FastAPI Calculator with BREAD Operations - Final Project
 
 ## Overview
-This is a **Module 14** FastAPI project that implements complete BREAD (Browse, Read, Edit, Add, Delete) functionality for calculations with JWT authentication, comprehensive front-end interface, Playwright E2E tests, and automated CI/CD deployment to Docker Hub.
+This is a **Final Project** for IS601 that implements complete BREAD (Browse, Read, Edit, Add, Delete) functionality for calculations with JWT authentication, comprehensive front-end interface, Playwright E2E tests, and automated CI/CD deployment to Docker Hub.
 
 ## Key Features
 - **Complete BREAD Operations**: Browse, Read, Edit, Add, Delete calculations with user authentication
@@ -17,12 +17,85 @@ This is a **Module 14** FastAPI project that implements complete BREAD (Browse, 
 - **CI/CD Pipeline**: GitHub Actions with automated testing and Docker Hub deployment
 - **Docker Support**: Containerized deployment ready
 
-## 🆕 Module 14 Additions
+## 🆕 Project Features
 - **Authenticated BREAD Endpoints**: All calculation operations require JWT authentication
 - **User-Scoped Calculations**: Users can only access their own calculation data
 - **Complete Frontend Interface**: Full-featured calculations manager with Browse, Add, Edit operations
 - **Enhanced E2E Tests**: Comprehensive Playwright tests covering all BREAD scenarios
-- **Updated CI/CD**: Modified pipeline for Module 14 with Docker Hub deployment
+- **Automated CI/CD**: GitHub Actions pipeline with automated testing and Docker Hub deployment
+
+## 🎓 Final Project Feature: User Profile & Password Management
+
+### New Features
+This Final Project adds comprehensive user profile management capabilities with a modern, visually appealing interface:
+
+#### Core Functionality
+- **User Profile Management**: View and update user profile information (email, bio)
+- **Password Change**: Securely change password with current password verification
+- **Profile Page**: Dedicated profile page at `/static/profile.html` with modern purple gradient UI
+- **Profile Fields**: Users can add a bio/about section (500 characters) to personalize their profile
+- **Security**: All profile operations require JWT authentication
+- **Timestamp Tracking**: Profile updates are tracked with `profile_updated_at` field
+
+#### UI/UX Enhancements (Impressive Features! 🌟)
+- **Modern Gradient Design**: Eye-catching purple/pink gradient background with glassmorphism effects
+- **Avatar with Initials**: Dynamic avatar circle displaying user's initials at the top
+- **Profile Statistics Dashboard**: Real-time stats showing:
+  - Total calculations count
+  - Days since account creation (member days)
+  - Profile update count
+- **Password Strength Indicator**: Real-time visual feedback with color-coded strength meter:
+  - Red = Weak (< 8 chars or simple)
+  - Orange = Medium (good length + some complexity)
+  - Green = Strong (12+ chars with uppercase, lowercase, numbers, special chars)
+- **Smooth Animations**: 
+  - Slide-in effect on page load
+  - Card hover effects with elevation changes
+  - Animated alerts and transitions
+- **Professional Color Scheme**: Purple (#667eea), Pink (#f5576c) gradients with white cards
+- **Enhanced User Info Card**: Gradient card with emoji icons for better visual hierarchy
+- **Responsive Design**: Mobile-friendly with proper scaling on all devices
+- **Error Handling**: User-friendly error messages with specific feedback (duplicate email, password mismatch, etc.)
+
+### New API Endpoints
+
+| Method | Endpoint | Description | Request Body | Response | Auth Required |
+|--------|----------|-------------|--------------|----------|---------------|
+| GET | `/profile` | Get current user profile | - | `UserProfile` (200) | Yes |
+| PUT | `/profile` | Update profile (email, bio) | `UserProfileUpdate` | `UserProfile` (200) | Yes |
+| POST | `/change-password` | Change password | `PasswordChange` | `{message}` (200) | Yes |
+
+### Technical Implementation Highlights
+
+#### Backend Architecture
+- **RESTful API Design**: Three new authenticated endpoints following REST principles
+- **Database Schema Extension**: Added `bio` (VARCHAR 500) and `profile_updated_at` (TIMESTAMP) columns
+- **Data Validation**: Multi-layer validation (Pydantic schemas, database constraints, business logic)
+- **Email Uniqueness Check**: Prevents duplicate emails across user updates
+- **Password Security**: Current password verification before allowing changes
+- **Automatic Timestamps**: Updates `profile_updated_at` on every profile modification
+
+#### Frontend Features
+- **Single Page Application (SPA) Pattern**: Dynamic content loading without page refreshes
+- **Fetch API Integration**: Modern async/await JavaScript for API communication
+- **Local Storage JWT**: Secure token storage and automatic authentication
+- **Real-time Calculations**: Fetches user's calculation count from API
+- **Date Calculations**: Client-side computation of membership duration
+- **Form Validation**: Client-side checks before API calls to reduce server load
+- **Password Strength Algorithm**: Multi-factor strength calculation (length, complexity, character variety)
+
+### Profile Schemas
+
+- **UserProfile**: `{id, username, email, bio, created_at, profile_updated_at}` - Full profile data
+- **UserProfileUpdate**: `{email?, bio?}` - Optional fields for profile updates
+- **PasswordChange**: `{current_password, new_password, confirm_password}` - Password change validation with @model_validator
+
+### User Workflows
+
+1. **View Profile**: Login → Navigate to `/static/profile.html` → View profile information
+2. **Update Profile**: Login → Profile page → Update email/bio → Submit → See success message
+3. **Change Password**: Login → Profile page → Enter current & new password → Submit → Auto-logout → Re-login with new password
+4. **Profile Navigation**: Access calculations from profile page or logout securely
 
 ## Project Structure
 
@@ -117,6 +190,8 @@ username: str (unique, 3-50 chars)
 email: str (unique, valid email format)
 password_hash: str (PBKDF2-SHA256 hashed)
 created_at: datetime (server default)
+bio: str (optional, max 500 chars) [NEW - Final Project]
+profile_updated_at: datetime (optional) [NEW - Final Project]
 calculations: List[Calculation] (relationship, cascade delete)
 ```
 
@@ -155,8 +230,8 @@ result: float (computed on-the-fly in schema)
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Tejen1710/Module-14.git
-   cd module-14
+   git clone https://github.com/Tejen1710/Final-Project.git
+   cd Final-Project
    ```
 
 2. **Create and activate virtual environment:**
@@ -217,9 +292,26 @@ pytest tests/unit/ -v
 pytest tests/integration/ -v
 ```
 
+**Run E2E tests (requires running server):**
+```bash
+pytest tests/e2e/ -v
+```
+
 **Run specific test file:**
 ```bash
 pytest tests/integration/test_users_calculations_api.py -v
+```
+
+**Run Final Project profile tests:**
+```bash
+# Unit tests
+pytest tests/unit/test_password_change.py -v
+
+# Integration tests
+pytest tests/integration/test_profile_api.py -v
+
+# E2E tests
+pytest tests/e2e/test_profile_e2e.py -v
 ```
 
 **Run with coverage report:**
@@ -370,6 +462,66 @@ curl -X DELETE "http://127.0.0.1:8000/api/calculations/1" \
 
 **Response (204 No Content)**
 
+### 8. Get User Profile (Requires JWT) - Final Project Feature
+```bash
+curl -X GET "http://127.0.0.1:8000/profile" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Response (200):**
+```json
+{
+  "id": 1,
+  "username": "john123",
+  "email": "john@example.com",
+  "bio": "Calculator enthusiast",
+  "created_at": "2024-01-15T10:30:00",
+  "profile_updated_at": "2024-01-20T14:45:00"
+}
+```
+
+### 9. Update User Profile (Requires JWT) - Final Project Feature
+```bash
+curl -X PUT "http://127.0.0.1:8000/profile" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "email": "newemail@example.com",
+    "bio": "Updated bio information"
+  }'
+```
+
+**Response (200):**
+```json
+{
+  "id": 1,
+  "username": "john123",
+  "email": "newemail@example.com",
+  "bio": "Updated bio information",
+  "created_at": "2024-01-15T10:30:00",
+  "profile_updated_at": "2024-01-21T09:15:00"
+}
+```
+
+### 10. Change Password (Requires JWT) - Final Project Feature
+```bash
+curl -X POST "http://127.0.0.1:8000/change-password" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "current_password": "oldpassword123",
+    "new_password": "newpassword456",
+    "confirm_password": "newpassword456"
+  }'
+```
+
+**Response (200):**
+```json
+{
+  "message": "Password changed successfully"
+}
+```
+
 ## Frontend Usage
 
 ### Access the Web Interface
@@ -377,6 +529,7 @@ curl -X DELETE "http://127.0.0.1:8000/api/calculations/1" \
 2. **Register**: Navigate to `http://127.0.0.1:8000/static/register.html`
 3. **Login**: Navigate to `http://127.0.0.1:8000/static/login.html`
 4. **Manage Calculations**: After login, you'll be redirected to `http://127.0.0.1:8000/static/calculations.html`
+5. **User Profile**: Access your profile at `http://127.0.0.1:8000/static/profile.html` 🆕
 
 ### Calculations Manager Features
 - **Browse**: View all your calculations in a list with results
@@ -386,15 +539,23 @@ curl -X DELETE "http://127.0.0.1:8000/api/calculations/1" \
 - **Client-Side Validation**: Checks for divide-by-zero, valid numbers, required fields
 - **Automatic Redirects**: Session expiry detection redirects to login page
 
+### User Profile Features 🆕 Final Project
+- **View Profile**: See your username, email, and account creation date
+- **Update Profile**: Change your email address or add/edit your bio
+- **Change Password**: Securely update your password with current password verification
+- **Navigation**: Quick links to calculations page and logout
+- **Validation**: Client-side and server-side validation for all inputs
+- **Auto-Logout**: After password change, you're logged out and must re-login
+
 ## Test Coverage
 
 ### Test Summary
-- **Total Tests**: 70+ ✅
-- **Unit Tests**: 29 (factory, schemas, security)
-- **Integration Tests**: 28 (user + calculation API)
-- **E2E Tests**: 13+ (authentication + BREAD operations)
+- **Total Tests**: 90+ ✅
+- **Unit Tests**: 39 (factory, schemas, security, password/profile validation)
+- **Integration Tests**: 40+ (user + calculation + profile API)
+- **E2E Tests**: 21+ (authentication + BREAD operations + profile workflows)
 
-### E2E Test Coverage (Module 14)
+### E2E Test Coverage (Module 14 + Final Project)
 
 **Calculations BREAD E2E Tests:**
 - ✅ Add calculation with valid data (positive)
@@ -414,6 +575,16 @@ curl -X DELETE "http://127.0.0.1:8000/api/calculations/1" \
 - ✅ Register with invalid email (negative)
 - ✅ Register with short password (negative)
 - ✅ Login with wrong password (negative)
+
+**Profile Management E2E Tests (Final Project):** 🆕
+- ✅ View profile workflow (login → view → verify data displayed)
+- ✅ Update profile workflow (login → update bio → verify persistence)
+- ✅ Change password workflow (login → change → logout → re-login)
+- ✅ Wrong current password error handling (negative)
+- ✅ Password mismatch validation (negative)
+- ✅ Profile navigation (profile ↔ calculations)
+- ✅ Logout from profile page
+- ✅ Unauthorized profile access redirect (negative)
 
 ### Key Test Categories
 
@@ -477,12 +648,15 @@ curl -X DELETE "http://127.0.0.1:8000/api/calculations/1" \
 - **Error**: 404 Not Found if doesn't exist or doesn't belong to user
 
 ## Security Features
-- **JWT Authentication**: Bearer token required for all calculation operations
-- **User Data Isolation**: Users can only access their own calculations
+- **JWT Authentication**: Bearer token required for all calculation and profile operations
+- **User Data Isolation**: Users can only access their own calculations and profile
 - **Password Hashing**: PBKDF2-SHA256 algorithm (secure, no salt issues)
 - **Token Expiration**: 60-minute expiry on JWT tokens
-- **Input Validation**: Pydantic schemas with type hints
-- **Error Handling**: Appropriate HTTP status codes (401, 404, etc.)
+- **Password Change Verification**: Current password must be verified before changing 🆕
+- **Password Validation**: Minimum 8 characters, match confirmation required 🆕
+- **Input Validation**: Pydantic schemas with type hints for all requests
+- **Email Validation**: Ensures unique email addresses across users 🆕
+- **Error Handling**: Appropriate HTTP status codes (401, 404, 400, etc.)
 - **Database Constraints**: Unique constraints on username and email
 - **Relationships**: CASCADE delete for data integrity
 - **Dependency Injection**: FastAPI's dependency system for database sessions
@@ -523,9 +697,9 @@ docker stop calculator-app
 - `PORT`: Server port (default: `8000`)
 - `HOST`: Server host (default: `0.0.0.0`)
 
-## Module 14: Complete BREAD Operations with Authentication
+## Complete BREAD Operations with Authentication
 
-### What's New in Module 14
+### Key Features
 
 **Authenticated Calculation Endpoints:**
 - All calculation BREAD operations require JWT authentication
@@ -590,7 +764,9 @@ pytest tests/e2e/ -v
 
 **View workflow:** `.github/workflows/ci.yml`
 
-**Docker Hub Repository:** `[your-username]/module14-calculator`
+**Docker Hub Repository:** `tejenthakkar1710/final-project-calculator`
+
+**Docker Hub Link:** https://hub.docker.com/r/tejenthakkar1710/final-project-calculator
 
 **Secrets Required:**
 - `DOCKERHUB_USERNAME` - Your Docker Hub username
@@ -626,28 +802,70 @@ pytest tests/integration/ -v
 pytest tests/e2e/test_calculations_e2e.py -v
 ```
 
-## Submission Checklist
+## Final Project Submission Checklist
 
-### Required Files ✅
+### Required Implementation ✅
+- [x] **New Feature**: User Profile & Password Management
+- [x] **Backend**: 3 new authenticated API endpoints (GET/PUT profile, POST change-password)
+- [x] **Database**: User model updated with `bio` and `profile_updated_at` fields
+- [x] **Schemas**: UserProfile, UserProfileUpdate, PasswordChange with validation
+- [x] **CRUD Operations**: update_user_profile(), change_user_password()
+- [x] **Frontend**: New `profile.html` page with forms and client-side validation
+- [x] **Frontend Logic**: `profile.js` with API integration and error handling
+- [x] **Unit Tests**: Password hashing, schema validation (10+ tests)
+- [x] **Integration Tests**: Profile API endpoints with DB verification (12+ tests)
+- [x] **E2E Tests**: Complete workflow tests with Playwright (8+ tests)
+- [x] **Documentation**: Updated README with feature documentation
+
+### Test Coverage for Final Project Feature 📊
+- **Unit Tests** (test_password_change.py): 10+ tests
+  - Password hashing and verification
+  - PasswordChange schema validation
+  - UserProfileUpdate schema validation
+- **Integration Tests** (test_profile_api.py): 12+ tests
+  - Get profile (authenticated/unauthenticated)
+  - Update profile (success/email conflict/partial updates)
+  - Change password (success/wrong current/mismatch/too short)
+- **E2E Tests** (test_profile_e2e.py): 8+ tests
+  - Full workflow: login → view → update → verify
+  - Password change workflow: change → logout → re-login
+  - Validation and error handling
+  - Navigation and security
+
+### Module 14 Checklist ✅
 - [x] Complete BREAD endpoints with JWT authentication
 - [x] Frontend `calculations.html` with all operations
 - [x] Comprehensive E2E tests for BREAD operations
 - [x] Updated GitHub Actions CI/CD workflow
-- [x] Updated README with Module 14 documentation
+- [x] Updated README with complete documentation
 - [x] reflection.md with project insights
 
 ### Screenshots to Provide 📸
-1. **GitHub Actions Workflow** - Successful CI/CD run
+1. **GitHub Actions Workflow** - Successful CI/CD run with all tests passing
 2. **Docker Hub** - Pushed image in repository
-3. **Frontend BREAD Operations** - Screenshots of:
+3. **Frontend BREAD Operations**:
    - Browse calculations page
    - Add calculation form
    - Edit calculation form
    - Delete confirmation dialog
+4. **Profile Feature** 🆕:
+   - Profile page showing user info
+   - Profile update form
+   - Password change form
+   - Success/error messages
 
 ### Links to Provide 🔗
 - GitHub Repository URL
 - Docker Hub Repository URL
+
+### Learning Outcomes Demonstrated ✅
+- **CLO3**: Automated testing with pytest (90+ tests)
+- **CLO4**: GitHub Actions CI/CD with Docker deployment
+- **CLO9**: Docker containerization (Dockerfile + docker-compose)
+- **CLO10**: REST API creation and testing (FastAPI endpoints)
+- **CLO11**: SQL database integration (SQLAlchemy ORM)
+- **CLO12**: JSON validation with Pydantic schemas
+- **CLO13**: Secure authentication (JWT, password hashing, verification)
 
 ## Dependencies
 
@@ -678,6 +896,15 @@ This module maintains backward compatibility with Module 11:
 - **Username**: 3-50 characters, unique
 - **Email**: Valid email format, unique
 - **Password**: Minimum 8 characters
+
+### User Profile Update 🆕
+- **Email**: Valid email format, must be unique (can't use another user's email)
+- **Bio**: Optional, max 500 characters
+
+### Password Change 🆕
+- **Current Password**: Required, must match existing password
+- **New Password**: Minimum 8 characters
+- **Confirm Password**: Must match new password
 
 ### Calculation Creation
 - **a, b**: Float values (positive or negative)
