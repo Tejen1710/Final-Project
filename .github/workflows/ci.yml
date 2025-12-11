@@ -1,4 +1,4 @@
-name: CI/CD - Module 14
+name: CI/CD - Final Project
 
 on:
   push:

@@ -159,7 +159,7 @@ Root Files:
 | POST | `/users/login` | Authenticate user (old) | `UserLogin` | `UserRead` (200) | No |
 | GET | `/users/{user_id}` | Get user details | - | `UserRead` (200) | No |
 
-### Calculation Endpoints (BREAD) - Module 14 Authenticated
+### Calculation Endpoints (BREAD) - Authenticated
 
 | Method | Endpoint | Description | Request Body | Response | BREAD Operation |
 |--------|----------|-------------|--------------|----------|-----------------|
@@ -555,7 +555,7 @@ curl -X POST "http://127.0.0.1:8000/change-password" \
 - **Integration Tests**: 40+ (user + calculation + profile API)
 - **E2E Tests**: 21+ (authentication + BREAD operations + profile workflows)
 
-### E2E Test Coverage (Module 14 + Final Project)
+### E2E Test Coverage
 
 **Calculations BREAD E2E Tests:**
 - ✅ Add calculation with valid data (positive)
@@ -832,7 +832,7 @@ pytest tests/e2e/test_calculations_e2e.py -v
   - Validation and error handling
   - Navigation and security
 
-### Module 14 Checklist ✅
+### Project Features Checklist ✅
 - [x] Complete BREAD endpoints with JWT authentication
 - [x] Frontend `calculations.html` with all operations
 - [x] Comprehensive E2E tests for BREAD operations
@@ -934,7 +934,7 @@ This project is licensed under the MIT License - see LICENSE file for details.
 
 **Tejen Thakkar**
 - GitHub: [@Tejen1710](https://github.com/Tejen1710)
-- Repository: [Module-14](https://github.com/Tejen1710/Module-14)
+- Repository: [Final-Project](https://github.com/Tejen1710/Final-Project)
 
 ## References
 

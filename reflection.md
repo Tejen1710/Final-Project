@@ -1,9 +1,9 @@
-# Module 14 Reflection - Complete BREAD Operations with Authentication
+# Final Project Reflection - Complete BREAD Operations with Authentication
 
 ## Project Overview
-Module 14 built upon Module 13's JWT authentication foundation to implement complete BREAD (Browse, Read, Edit, Add, Delete) functionality for calculations. This module focused on securing all calculation endpoints with JWT authentication, creating a comprehensive front-end interface for managing calculations, implementing user-specific data isolation, and writing extensive Playwright E2E tests to verify all BREAD operations work correctly with both positive and negative scenarios.
+This project built upon JWT authentication foundation to implement complete BREAD (Browse, Read, Edit, Add, Delete) functionality for calculations. The project focused on securing all calculation endpoints with JWT authentication, creating a comprehensive front-end interface for managing calculations, implementing user-specific data isolation, and writing extensive Playwright E2E tests to verify all BREAD operations work correctly with both positive and negative scenarios.
 
-## Module 14 Specific Accomplishments
+## Project Accomplishments
 
 ### 1. Authenticated BREAD Endpoints Implementation
 **What Was Implemented:**

@@ -26,7 +26,7 @@ def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @app.post("/users/register", response_model=schemas.UserRead, status_code=201)
 def register_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
-    """Register a new user (Module 14 spec)"""
+    """Register a new user"""
     user = crud.create_user(db, user_in)
     return user
 
@@ -58,7 +58,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 
 # ---------- Calculation BREAD Endpoints (Old, no auth for backward compatibility) ----------
-# Note: For Module 14 authenticated endpoints, use /api/calculations/* instead
+# Note: For authenticated endpoints, use /api/calculations/* instead
 
 @app.post("/calculations/", response_model=schemas.CalculationRead, status_code=201)
 def create_calculation(calc_in: schemas.CalculationCreate, db: Session = Depends(get_db)):
