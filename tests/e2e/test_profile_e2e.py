@@ -16,12 +16,13 @@ def register_and_login(page: Page, base_url):
     page.wait_for_load_state("networkidle")
     
     # Register
-    page.fill('input[name="email"]', email)
-    page.fill('input[name="password"]', password)
+    page.fill('#email', email)
+    page.fill('#password', password)
+    page.fill('#confirm-password', password)
     page.click('button[type="submit"]')
     
     # Wait for redirect or success
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(2000)
     
     return {"email": email, "password": password}
 
@@ -107,8 +108,8 @@ class TestProfileE2E:
         expect(page).to_have_url(f"{base_url}/static/login.html", timeout=5000)
         
         # Try to login with new password
-        page.fill('input[name="email"]', credentials["email"])
-        page.fill('input[name="password"]', new_password)
+        page.fill('#email', credentials["email"])
+        page.fill('#password', new_password)
         page.click('button[type="submit"]')
         
         # Wait for successful login (redirect to calculations page)
