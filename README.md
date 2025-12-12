@@ -1,4 +1,5 @@
 # FastAPI Calculator with BREAD Operations - Final Project
+[![CI/CD - Final Project](https://github.com/Tejen1710/Final-Project/actions/workflows/ci.yml/badge.svg)](https://github.com/Tejen1710/Final-Project/actions/workflows/ci.yml)
 
 ## Overview
 This is a **Final Project** for IS601 that implements complete BREAD (Browse, Read, Edit, Add, Delete) functionality for calculations with JWT authentication, comprehensive front-end interface, Playwright E2E tests, and automated CI/CD deployment to Docker Hub.
